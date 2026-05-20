@@ -277,43 +277,66 @@ struct PushlyApp: App {
 
 ```
 Pushly のデザインシステムを Helpers/DesignSystem.swift に実装してください。
-プロトタイプ(添付HTMLまたは口頭で参照)と同じトーンにしたいです。
+
+プロトタイプは pushly-prototype-v6.html を参照。
+カラーは「オフホワイト〜ピーチ〜ピンク〜ブルー」の柔らかなグラデーション系。
+彩度を抑え、ニュートラルなトーンで統一する。
 
 ## カラー
-enum Palette として以下を定義：
-- bgStart:   Color(red: 0.925, green: 0.906, blue: 0.961)  // #ece7f5
-- bgEnd:     Color(red: 0.863, green: 0.835, blue: 0.933)  // #dcd5ee
-- surface:   Color.white
-- ink:       Color(red: 0.078, green: 0.078, blue: 0.102)  // #14141a
-- inkSoft:   Color(red: 0.42, green: 0.42, blue: 0.47)     // #6b6b78
-- inkFaint:  Color(red: 0.647, green: 0.647, blue: 0.69)   // #a5a5b0
-- line:      Color.black.opacity(0.06)
-- lineStrong:Color.black.opacity(0.12)
-- premium:   Color(red: 0.42, green: 0.373, blue: 0.722)   // #6b5fb8
+enum Palette として以下を定義(全てColor型):
+
+- bgStart:     Color(red: 0.961, green: 0.929, blue: 0.894)  // #f5ede4 ペールピーチ
+- bgMid:       Color(red: 0.941, green: 0.863, blue: 0.878)  // #f0dce0 ペールピンク
+- bgEnd:       Color(red: 0.863, green: 0.894, blue: 0.933)  // #dce4ee ペールブルー
+- surface:     Color.white
+- ink:         Color(red: 0.122, green: 0.122, blue: 0.141)  // #1f1f24
+- inkSoft:     Color(red: 0.420, green: 0.420, blue: 0.470)  // #6b6b78
+- inkFaint:    Color(red: 0.647, green: 0.647, blue: 0.690)  // #a5a5b0
+- line:        Color.black.opacity(0.06)
+- lineStrong:  Color.black.opacity(0.12)
+- premium:     Color(red: 0.769, green: 0.451, blue: 0.541)  // #c4738a ダスティローズ
+- accentWarm:  Color(red: 0.851, green: 0.604, blue: 0.478)  // #d99a7a
+- accentCool:  Color(red: 0.541, green: 0.643, blue: 0.769)  // #8aa4c4
 
 ## 背景 View
 struct AppBackground: View
-- ZStack でラベンダーグラデーション + 2つの radialGradient ブロブ
+- ZStack で以下を重ねる:
+  - 一番下: LinearGradient (bgStart → bgMid → bgEnd を上から下に、stops: 0/0.45/1.0)
+  - 中段: RadialGradient (中央上に bgStart、ぼかし大きめ)
+  - 上段: RadialGradient (右中央付近に bgMid)
+  - 下段: RadialGradient (左下に bgEnd)
 - ignoresSafeArea()
 
 ## カードのモディファイア
-- .cardStyle(): 白カード(角丸20、影、boder)
-- .darkCardStyle(): ダークカード(角丸24、内側パディング多め)
+- .cardStyle(): 白カード(角丸20、影 y:10 radius:30 opacity 0.08 inkベース、line border)
+- .darkCardStyle(): ダークカード(背景 ink、文字白、角丸24、内側パディング多め)
 
 ## ボタンスタイル
-- PrimaryButtonStyle (黒背景、白文字、角丸14)
-- SecondaryButtonStyle (白背景、黒枠線)
+- PrimaryButtonStyle (背景 ink、白文字、角丸14、フォント 15pt semibold)
+- SecondaryButtonStyle (背景 .white、ink文字、border lineStrong)
 
 ## カテゴリ色のヘルパー
+let CATEGORY_COLOR_PALETTE: [String] = [
+  "#d96b52", "#e8a23d", "#c4a256", "#8aa66a",
+  "#5fa0a8", "#6b8fb8", "#8d7bc4", "#b56fae",
+  "#d97a9b", "#8d8d95", "#5a6d75", "#3d4047",
+  "#a0856e", "#7a9474", "#c08a5a", "#9b6fa8"
+]
+
 func categoryColor(from hex: String) -> Color
 - "#RRGGBB" を Color に変換するユーティリティ
 
 ## カウントダウン用フォント拡張
 extension Font:
-- displayLg: 30 / weight(.bold) / .system
-- displayMd: 22 / weight(.semibold)
-- countdown: 72 / weight(.bold)
-- eyebrow:   10 / weight(.medium) / 字間を広く取る用
+- displayLg: 30pt / weight(.bold) / .system
+- displayMd: 22pt / weight(.semibold)
+- countdown: 72pt / weight(.bold)
+- eyebrow:   10pt / weight(.medium) / 字間を広く取る用
+
+## 注意点
+- 紫の強い色は使わない。premium は紫ではなくダスティローズ(#c4738a)を使用
+- 全体的に彩度を抑え、暖色から寒色へ移ろうトーンを意識
+- SwiftUI の Color(red:green:blue:) は0〜1の値を取る点に注意
 ```
 
 ## 2-2. 【プロンプト】DateExtensions.swift
@@ -1135,7 +1158,15 @@ SwiftData の API は iOS バージョンで微妙に違うので、エラーメ
 
 # 変更履歴
 
-## v0.3 (このプロンプト)
+## v0.4 (このプロンプト)
+
+- v0.3 からの変更:
+  - Phase 2-1 のカラーパレットを刷新（紫基調 → ピーチ〜ピンク〜ブルーの柔らかなグラデーション）
+  - プレミアムアクセントカラーを紫 (#6b5fb8) からダスティローズ (#c4738a) に変更
+  - 暖色アクセント・寒色アクセントの2色を追加
+  - 参照プロトタイプを v6 (pushly-prototype-v6.html) に更新
+
+## v0.3
 
 - v0.2 からの追加:
   - Apple Developer Program 契約は Phase 9 まで遅らせる方針に変更
