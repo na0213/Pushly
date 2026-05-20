@@ -1,4 +1,21 @@
+# Xcode user data
 xcuserdata/
-.claude/
-.claude/
 UserInterfaceState.xcuserstate
+
+# Build artifacts
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.DS_Store
+
+# Claude Code worktrees
+.claude/
+
+# Documents & assets (managed outside repo)
+*.docx
+app-icon.png
+prompt.md
